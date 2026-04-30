@@ -42,7 +42,7 @@ void loop() {
     float currentHum = dht.readHumidity();    
     float currentTemp = dht.readTemperature();
 
-    // Έλεγχος εγκυρότητας της μέτρησης (για να μην καταγράψουμε "σκουπίδια" στο αρχείο)
+    // Έλεγχος εγκυρότητας της μέτρησης
     if (isnan(currentHum) || isnan(currentTemp)) {
       Serial.println("Αποτυχία ανάγνωσης από τον DHT22! Ελέγξτε την καλωδίωση.");
       return;
@@ -50,7 +50,7 @@ void loop() {
 
     // Εμφάνιση στο Serial Monitor του VS Code
     unsigned long uptimeSeconds = millis() / 1000;
-    Serial.printf("Uptime: %lu δευτ. | Υγρασία: %.1f%% | Θερμοκρασία: %.1f°C\n", uptimeSeconds, currentHum, currentTemp);
+    Serial.printf("Υγρασία: %.1f%%, Θερμοκρασία: %.1f°C\n",currentHum, currentTemp);
 
     // Κλήση της συνάρτησης για καταγραφή στη μνήμη
     saveToFlash(currentTemp, currentHum);
