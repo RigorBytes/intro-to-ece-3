@@ -1,0 +1,12 @@
+# PlatformIO
+.pio/
+.vscode/
+*.bin
+*.elf
+
+# Αρχεία με κωδικούς/ευαίσθητα δεδομένα (ΑΠΑΡΑΙΤΗΤΟ)
+include/secrets.h
+
+# Προσωρινά αρχεία του λειτουργικού συστήματος
+.DS_Store
+Thumbs.db
