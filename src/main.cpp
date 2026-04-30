@@ -49,7 +49,6 @@ void loop() {
     }
 
     // Εμφάνιση στο Serial Monitor του VS Code
-    unsigned long uptimeSeconds = millis() / 1000;
     Serial.printf("Υγρασία: %.1f%%, Θερμοκρασία: %.1f°C\n",currentHum, currentTemp);
 
     // Κλήση της συνάρτησης για καταγραφή στη μνήμη
