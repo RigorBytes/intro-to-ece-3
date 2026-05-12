@@ -1,58 +1,57 @@
 import dht
 import machine
 import time
+import os
 
-# Ρύθμιση του αισθητήρα DHT22 στο GPIO2 (D4)
-# Ενεργοποιούμε το Internal Pull-up resistor μέσω κώδικα
 sensor_pin = machine.Pin(2, machine.Pin.IN, machine.Pin.PULL_UP)
 sensor = dht.DHT22(sensor_pin)
 
 LOG_FILE = "log.txt"
-MAX_RECORDS = 20  # Αποθήκευση των τελευταίων 20 μετρήσεων
+OLD_LOG_FILE = "log_old.txt"
+MAX_FILE_SIZE = 1_000_000  # 1MB
+UI_RECORDS = 200  # Κρατάει 200 μετρήσεις για το γράφημα
 
 def read_sensor():
-    """Διαβάζει θερμοκρασία και υγρασία από τον DHT22."""
     try:
         sensor.measure()
-        temp = sensor.temperature()
-        hum = sensor.humidity()
-        return temp, hum
+        return sensor.temperature(), sensor.humidity()
     except OSError as e:
-        print("Σφάλμα ανάγνωσης αισθητήρα:", e)
+        print("Σφάλμα ανάγνωσης:", e)
         return None, None
 
-def get_history():
-    """Ανακτά τα ιστορικά δεδομένα από τη Flash."""
-    try:
-        with open(LOG_FILE, "r") as f:
-            return f.readlines()
-    except OSError:
-        # Αν το αρχείο δεν υπάρχει ακόμα (πρώτη εκτέλεση), επιστρέφει κενή λίστα
-        return []
-
 def log_data(temp, hum):
-    """Καταγράφει τη νέα μέτρηση και διατηρεί το όριο των MAX_RECORDS."""
+    """Αποθηκεύει τη μέτρηση στη Flash με ασφάλεια."""
     if temp is None or hum is None:
         return
     
-    # Χρησιμοποιούμε τα ticks του συστήματος ως υποτυπώδες timestamp 
-    # (καθώς στο AP mode δεν έχουμε internet για NTP time)
+    # Έλεγχος μεγέθους για να μην γεμίσει ποτέ η Flash (Log Rotation)
+    try:
+        size = os.stat(LOG_FILE)[6]
+        if size > MAX_FILE_SIZE:
+            try:
+                os.remove(OLD_LOG_FILE)
+            except OSError:
+                pass
+            os.rename(LOG_FILE, OLD_LOG_FILE)
+    except OSError:
+        pass
+        
     timestamp = time.ticks_ms() // 1000 
     new_record = "{},{},{}\n".format(timestamp, temp, hum)
     
-    # Φόρτωση παλιών εγγραφών
-    records = get_history()
-    
-    # Προσθήκη νέας εγγραφής
-    records.append(new_record)
-    
-    # Διατήρηση μόνο των τελευταίων MAX_RECORDS
-    if len(records) > MAX_RECORDS:
-        records = records[-MAX_RECORDS:]
-        
-    # Εγγραφή των ανανεωμένων δεδομένων στη Flash (στο log.txt)
-    with open(LOG_FILE, "w") as f:
-        for r in records:
-            f.write(r)
-            
-    print("Καταγράφηκε:", new_record.strip())
+    # Γράφει μόνο στο τέλος του αρχείου (ταχύτατο)
+    with open(LOG_FILE, "a") as f:
+        f.write(new_record)
+
+def get_recent_history():
+    """Φορτώνει μόνο τα τελευταία UI_RECORDS για να μην κρασάρει ο Server."""
+    lines = []
+    try:
+        with open(LOG_FILE, "r") as f:
+            for line in f:
+                lines.append(line.strip())
+                if len(lines) > UI_RECORDS:
+                    lines.pop(0) # Πετάει το παλαιότερο
+    except OSError:
+        pass
+    return lines
