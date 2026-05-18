@@ -1,6 +1,6 @@
 import socket
 import ssl
-import base64
+import ubinascii
 import os
 import sensor_log
 import secrets
@@ -19,8 +19,8 @@ def send_email(temp, hum):
         rx()
         s.write(b"EHLO esp\r\n"); rx(); rx(); rx(); rx(); rx(); rx(); rx()
         s.write(b"AUTH LOGIN\r\n"); rx()
-        s.write(base64.b64encode(secrets.SENDER_EMAIL.encode()) + b"\r\n"); rx()
-        s.write(base64.b64encode(secrets.SENDER_PASSWORD.encode()) + b"\r\n"); rx()
+        s.write(ubinascii.b2a_base64(secrets.SENDER_EMAIL.encode()).strip() + b"\r\n"); rx()
+        s.write(ubinascii.b2a_base64(secrets.SENDER_PASSWORD.encode()).strip() + b"\r\n"); rx()
         s.write(b"MAIL FROM:<" + secrets.SENDER_EMAIL.encode() + b">\r\n"); rx()
         s.write(b"RCPT TO:<" + secrets.RECIPIENT_EMAIL.encode() + b">\r\n"); rx()
         s.write(b"DATA\r\n"); rx()

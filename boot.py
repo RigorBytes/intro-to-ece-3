@@ -6,15 +6,7 @@ import gc
 
 gc.collect()
 
-# 1. Ενεργοποίηση AP mode (Το ESP φτιάχνει το δικό του δίκτυο)
-ap = network.WLAN(network.AP_IF)
-ap.active(True)
-# Προσθήκη authmode=3 για να κλειδώσει με WPA2-PSK και να ζητάει κωδικό
-ap.config(essid=secrets.AP_SSID, password=secrets.AP_PASS, authmode=3)
-print("[-] Δημιουργήθηκε το δίκτυο:", secrets.AP_SSID)
-print("[-] IP του Web Server:", ap.ifconfig()[0])
-
-# 2. Ενεργοποίηση STA mode (Το ESP ψάχνει για ίντερνετ στο κινητό σου)
+# 1. ΠΡΩΤΑ ρυθμίζουμε το STA mode (Προσπάθεια σύνδεσης στο Internet)
 sta = network.WLAN(network.STA_IF)
 sta.active(True)
 sta.connect(secrets.WIFI_SSID, secrets.WIFI_PASS)
@@ -35,4 +27,14 @@ if sta.isconnected():
     except Exception as e:
         print("[-] Σφάλμα συγχρονισμού ώρας:", e)
 else:
-    print("[-] ΔΕΝ βρέθηκε ίντερνετ. Ο Web Server θα ξεκινήσει, αλλά τα email δεν θα λειτουργούν.")
+    print("[-] ΔΕΝ βρέθηκε ίντερνετ. Απενεργοποίηση STA για σταθερότητα του AP.")
+    sta.active(False) # <--- ΚΡΙΣΙΜΗ ΠΡΟΣΘΗΚΗ: Σταματάει το background scanning
+
+# 2. ΜΕΤΑ ρυθμίζουμε το AP mode (Το ESP φτιάχνει το δικό του δίκτυο)
+ap = network.WLAN(network.AP_IF)
+ap.active(True)
+# Χρήση authmode=4 (WPA/WPA2-PSK) για μέγιστη συμβατότητα με σύγχρονα κινητά
+ap.config(essid=secrets.AP_SSID, password=secrets.AP_PASS, authmode=4)
+
+print("[-] Δημιουργήθηκε το δίκτυο:", secrets.AP_SSID)
+print("[-] IP του Web Server:", ap.ifconfig()[0])

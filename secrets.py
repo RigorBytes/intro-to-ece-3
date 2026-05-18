@@ -6,7 +6,7 @@ AP_PASS = "12345678"
 
 # --- Ρυθμίσεις για το hotspot του κινητού σου (για να έχει Internet) ---
 WIFI_SSID = "Pixel_1213" # Βάλε το όνομα του hotspot σου
-WIFI_PASS = "oaggelostontrwei"
+WIFI_PASS = "12345678" # Βάλε τον κωδικό του hotspot σου
 
 ADMIN_PASS = "admin123"
 
