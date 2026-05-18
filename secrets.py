@@ -1,10 +1,16 @@
 # secrets.py
-WIFI_SSID = "ECE_Patras" # Το SSID του WiFi σου
-WIFI_PASS = "12345678"
 
-ADMIN_PASS = "admin123" # Κωδικός για τη διαγραφή της μνήμης
+# --- Ρυθμίσεις για το δίκτυο που θα εκπέμπει το ESP (Access Point) ---
+AP_SSID = "ECE_Patras"
+AP_PASS = "12345678" 
 
-# Ρυθμίσεις για αποστολή Email (Απαιτείται App Password αν χρησιμοποιείς Gmail)
+# --- Ρυθμίσεις για το hotspot του κινητού σου (για να έχει Internet) ---
+WIFI_SSID = "Pixel_1213" # Βάλε το όνομα του hotspot σου
+WIFI_PASS = "oaggelostontrwei"
+
+ADMIN_PASS = "admin123"
+
+# --- Ρυθμίσεις Email ---
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 465
 SENDER_EMAIL = "jimeandreadakis@gmail.com"
