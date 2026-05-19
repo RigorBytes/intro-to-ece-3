@@ -38,3 +38,7 @@ ap.config(essid=secrets.AP_SSID, password=secrets.AP_PASS, authmode=4)
 
 print("[-] Δημιουργήθηκε το δίκτυο:", secrets.AP_SSID)
 print("[-] IP του Web Server:", ap.ifconfig()[0])
+
+if sta.isconnected():
+    print("[-] Συνδέθηκε στο ίντερνετ επιτυχώς!")
+    print("[-] Η IP στο Hotspot είναι:", sta.ifconfig()[0]) # <--- ΠΡΟΣΘΗΚΗ

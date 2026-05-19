@@ -9,7 +9,7 @@ sensor = dht.DHT22(sensor_pin)
 LOG_FILE = "log.txt"
 OLD_LOG_FILE = "log_old.txt"
 MAX_FILE_SIZE = 1_000_000
-UI_RECORDS = 200
+UI_RECORDS = 50
 
 # Μνήμη (Caching) για να μην κρασάρει ο DHT22 από απανωτά requests
 last_read_time = 0
